@@ -1,0 +1,3 @@
+/cygdrive/c/Users/秦艽/CLionProjects/Student/cmake-build-debug-cygwin/CMakeFiles/rebuild_cache.dir
+/cygdrive/c/Users/秦艽/CLionProjects/Student/cmake-build-debug-cygwin/CMakeFiles/edit_cache.dir
+/cygdrive/c/Users/秦艽/CLionProjects/Student/cmake-build-debug-cygwin/CMakeFiles/Student.dir
