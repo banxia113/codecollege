@@ -15,11 +15,23 @@ typedef struct studentScore {
 typedef struct Student {
     char *id;
     char *className;
-    int age;
+    char *age;
     char *uId;
     char *address;
     char *email;
     studentScore *score;
 } Student;
+
+typedef struct StudentId{
+    char* id;
+    struct StudentId* next;
+}StudentId;
+
+typedef struct Class{
+    char* name;
+    struct Class* next;
+    StudentId* head;
+    StudentId* tail;
+}Class;
 
 #endif //STUDENT_STRUCT_VERIABLE_H
