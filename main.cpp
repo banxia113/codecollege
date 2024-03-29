@@ -16,6 +16,9 @@ int find(Student* arrylist,char* content,char way,int elementsize);
 void change(Student* arry,char* content,char way);
 void classappend(Class* head,char * classname,char* id);
 void classpop(Class* head,char* classname,char* id);
+void classcombine(Class* head,char* classname1,char* classname2);
+void printclass(Class* head,char* classname);
+void printdata(Student* arrylist,int index);
 
 
 Student* studentlist;
@@ -31,6 +34,8 @@ void system(){
     cout<<"****输入2删除****"<<endl;
     cout<<"****输入3查询****"<<endl;
     cout<<"****输入4改动****"<<endl;
+    cout<<"****输入5合并****"<<endl;
+    cout<<"****输入6查看班级成员****"<<endl;
     while(1){
         int option=-1;
         cout<<"请输入您的操作：";
@@ -206,18 +211,21 @@ void system(){
                             char* content=(char*)malloc(sizeof(char)*100);
                             cin>>content;
                             int index=find(studentlist,content,FIND_ID,elementSize);
+                            printdata(studentlist,index);
                             break;
                         }
                         case 2:{
                             char* content=(char*)malloc(sizeof(char)*100);
                             cin>>content;
                             int index=find(studentlist,content,FIND_UID,elementSize);
+                            printdata(studentlist,index);
                             break;
                         }
                         case 3:{
                             char* content=(char*)malloc(sizeof(char)*100);
                             cin>>content;
                             int index=find(studentlist,content,FIND_EMAIL,elementSize);
+                            printdata(studentlist,index);
                             break;
                         }
                     }
@@ -256,8 +264,20 @@ void system(){
                             change(studentlist,content,FIND_EMAIL);
                             break;
                         }
-                        break;
                     }
+                    break;
+                }
+                case 5:{
+                    cout<<"请输入和并的两个班级：";
+                    char* classname1=(char*)malloc(sizeof(char)*100);
+                    char* classname2=(char*)malloc(sizeof(char)*100);
+                    cin>>classname1>>classname2;
+                    classcombine(allclasshead,classname1,classname2);
+                }
+                case 6:{
+                    cout<<"请输入查看的班级：";
+                    char* classname=(char*)malloc(sizeof(char)*100);
+                    printclass(allclasshead,classname);
                 }
             }
         }
@@ -332,7 +352,7 @@ int find(Student* arrylist,char* content,char way,int elementsize){//插
     }
 }
 
-void change(Student* arry,char* content,char way,int destination){
+void change(Student* arry,char* content,char way){
     int index=find(arry,content,way,elementSize);
     cout<<"更改学号输入1";
     cout<<"更改班级输入2";
@@ -451,6 +471,12 @@ void change(Student* arry,char* content,char way,int destination){
     }
 }
 
+void changeclass(Student* arry,char* content,char way){
+    int index=find(arry,content,way,elementSize);
+    strcpy(arry[index].className,content);
+    return ;
+}
+
 void classappend(Class* head,char* classname,char* id){
     Class* pre=NULL;
     Class* cur=head;
@@ -493,3 +519,64 @@ void classpop(Class* head,char* classname,char* id){
         cur=cur->next;
     }
 }
+
+void classcombine(Class* head,char* classname1,char* classname2){
+    Class* first=NULL;
+    Class* second=NULL;
+    Class* cur=head;
+    while(cur!=NULL && (first==NULL || second==NULL)){
+        if(strcmp(cur->name,classname1)==0){
+            first=cur;
+        }
+        if(strcmp(cur->name,classname2)==0){
+            second=cur;
+        }
+    }
+    if(first==NULL || second==NULL)return ;
+    first->tail->next=second->head;
+    StudentId *curid=second->head;
+    while(curid!=NULL){
+        changeclass(studentlist,curid->id,FIND_ID);
+        curid=curid->next;
+    }
+}
+
+void printclass(Class* head,char* classname){
+    Class* cur=head;
+    while(head!=NULL){
+        if(strcmp(head->name,classname)==0){
+            break;
+        }
+    }
+    cout<<"是否打印成绩"<<endl;
+    cout<<"输入1打印"<<endl;
+    cout<<"输入0不打印"<<endl;
+    cout<<"请输入你的选择：";
+    int option=0;
+    cin>>option;
+    StudentId * curid=cur->head;
+    while(curid!=NULL){
+        int index=find(studentlist,curid->id,FIND_ID,elementSize);
+        if(option==1){
+            printf("%s\t%s\t%s\t%s\t%s\t%s\t%.2f\t%.2f\t%.2f\t%.2f\n",studentlist[index].id,studentlist[index].className,studentlist[index].age,studentlist[index].uId,studentlist[index].address,studentlist[index].email,studentlist[index].score->chinese,studentlist[index].score->math,studentlist[index].score->english,studentlist[index].score->sport);
+        }
+        else printf("%s\t%s\t%s\t%s\t%s\t%s\n",studentlist[index].id,studentlist[index].className,studentlist[index].age,studentlist[index].uId,studentlist[index].address,studentlist[index].email);
+
+        curid=curid->next;
+    }
+}
+
+void printdata(Student* arrylist,int index){
+    cout<<"是否打印成绩"<<endl;
+    cout<<"输入1打印"<<endl;
+    cout<<"输入0不打印"<<endl;
+    cout<<"请输入你的选择：";
+    int option=0;
+    cin>>option;
+    if(option==1){
+        printf("%s\t%s\t%s\t%s\t%s\t%s\t%.2f\t%.2f\t%.2f\t%.2f\n",studentlist[index].id,studentlist[index].className,studentlist[index].age,studentlist[index].uId,studentlist[index].address,studentlist[index].email,studentlist[index].score->chinese,studentlist[index].score->math,studentlist[index].score->english,studentlist[index].score->sport);
+    }
+    else printf("%s\t%s\t%s\t%s\t%s\t%s\n",studentlist[index].id,studentlist[index].className,studentlist[index].age,studentlist[index].uId,studentlist[index].address,studentlist[index].email);
+    return ;
+}
+
