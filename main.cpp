@@ -14,7 +14,7 @@ void append(Student* arry,Student data);
 void pop(Student* arry,char* content,char way);
 int find(Student* arrylist,char* content,char way,int elementsize);
 void change(Student* arry,char* content,char way);
-void classappend(Class* head,char * classname,char* id);
+Class* classappend(Class* head,char * classname,char* id);
 void classpop(Class* head,char* classname,char* id);
 void classcombine(Class* head,char* classname1,char* classname2);
 void printclass(Class* head,char* classname);
@@ -159,7 +159,7 @@ void system(){
                     }
 
                     append(studentlist,*student);
-                    classappend(allclasshead,classname,id);
+                    allclasshead=classappend(allclasshead,classname,id);
                     break;
                 }
                 case 2:{
@@ -273,11 +273,14 @@ void system(){
                     char* classname2=(char*)malloc(sizeof(char)*100);
                     cin>>classname1>>classname2;
                     classcombine(allclasshead,classname1,classname2);
+                    break;
                 }
                 case 6:{
                     cout<<"请输入查看的班级：";
                     char* classname=(char*)malloc(sizeof(char)*100);
+                    cin>>classname;
                     printclass(allclasshead,classname);
+                    break;
                 }
             }
         }
@@ -477,28 +480,48 @@ void changeclass(Student* arry,char* content,char way){
     return ;
 }
 
-void classappend(Class* head,char* classname,char* id){
+Class* classappend(Class* head,char* classname,char* id){
     Class* pre=NULL;
     Class* cur=head;
-    while(head!=NULL){
-        if(strcmp(classname,cur->name)){
+    while(cur!=NULL){
+        if(strcmp(classname,cur->name)==0){
             StudentId* Id=(StudentId*)malloc(sizeof(StudentId));
+            Id->id=(char*)malloc(sizeof(char)*100);
             strcpy(Id->id,id);
             Id->next=NULL;
             cur->tail->next=Id;
             cur->tail=Id;
-            return;
+            return head;
         }
         pre=cur;
         cur=cur->next;
     }
-    cur=(Class*)malloc(sizeof(Class));
-    strcpy(cur->name,classname);
-    StudentId* Id=(StudentId*)malloc(sizeof(StudentId));
-    strcpy(Id->id,id);
-    Id->next=NULL;
-    cur->head=Id;
-    cur->tail=Id;
+    if(head==NULL){
+        head=(Class*)malloc(sizeof(Class));
+        strcpy(head->name,classname);
+        StudentId* Id=(StudentId*)malloc(sizeof(StudentId));
+        Id->id=(char*)malloc(sizeof(char)*100);
+        strcpy(Id->id,id);
+        Id->next=NULL;
+        head->head=Id;
+        head->tail=Id;
+        head->next=NULL;
+        return head;
+    }
+    else{
+        cur=(Class*)malloc(sizeof(Class));
+        strcpy(cur->name,classname);
+        StudentId* Id=(StudentId*)malloc(sizeof(StudentId));
+        Id->id=(char*)malloc(sizeof(char)*100);
+        strcpy(Id->id,id);
+        Id->next=NULL;
+        cur->head=Id;
+        cur->tail=Id;
+        cur->next=NULL;
+        pre->next=cur;
+        return head;
+    }
+
 }
 
 void classpop(Class* head,char* classname,char* id){
@@ -531,6 +554,7 @@ void classcombine(Class* head,char* classname1,char* classname2){
         if(strcmp(cur->name,classname2)==0){
             second=cur;
         }
+        cur=cur->next;
     }
     if(first==NULL || second==NULL)return ;
     first->tail->next=second->head;
